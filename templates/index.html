@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تنبؤ بمرض السكر</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: right;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+        }
+        input[type="text"], button {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تنبؤ بمرض السكر</h1>
+        <form id="predictionForm">
+            <input type="text" name="Pregnancies" placeholder="عدد مرات الحمل" required="required" />
+            <input type="text" name="Glucose" placeholder="جلوكوز" required="required" />
+            <input type="text" name="BloodPressure" placeholder="ضغط الدم" required="required" />
+            <input type="text" name="SkinThickness" placeholder="سماكة الجلد" required="required" />
+            <input type="text" name="Insulin" placeholder="الأنسولين" required="required" />
+            <input type="text" name="BMI" placeholder="مؤشر كتلة الجسم" required="required" />
+            <input type="text" name="DiabetesPedigreeFunction" placeholder="وظيفة السجل السكري" required="required" />
+            <input type="text" name="Age" placeholder="العمر" required="required" />
+            <button type="submit">تنبؤ</button>
+        </form>
+        <p id="result"></p>
+    </div>
+    <script>
+        document.getElementById('predictionForm').onsubmit = async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const json = JSON.stringify(Object.fromEntries(formData));
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: json
+            });
+            const result = await response.json();
+            document.getElementById('result').innerText = result.prediction ? `التنبؤ: ${result.prediction}` : `خطأ: ${result.error}`;
+        };
+    </script>
+</body>
+</html>
